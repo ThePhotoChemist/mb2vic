@@ -24,15 +24,9 @@
 110 poke v,15
 115 sys832
 
-120 read v1
-121 read w1
-122 read v2
-123 read w2
-124 read v3
-125 read w3
-126 read d1
+120 read v1:read w1:read v2:read w2:read v3:read w3:read d1
 
-130 if v1=-1 then 200
+130 if v1=0 then 200
 
 140 poke248,0:poke249,0:poke250,0
 
