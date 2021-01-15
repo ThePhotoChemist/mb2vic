@@ -10,6 +10,11 @@ ASMMode=1 		#0=using defualt VIC registers 1=using 10-OFR ASM code for pitches
 
 content = []
 
+#test
+#test test
+#test test test
+test=1
+
 with open(sys.argv[1], 'r') as my_file:
 	count = len(my_file.readlines(  ))
 	
