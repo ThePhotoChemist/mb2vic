@@ -10,7 +10,6 @@ ASMMode=1 		#0=using defualt VIC registers 1=using 10-OFR ASM code for pitches
 
 content = []
 
-
 with open(sys.argv[1], 'r') as my_file:
 	count = len(my_file.readlines(  ))
 	
@@ -27,10 +26,10 @@ if superverbose==1:
 	printdata=1
 
 PlaybackSpeedStrRaw=lines[1]
-PlaybackSpeedStr=PlaybackSpeedStrRaw.replace("PlaybackSpeed=","")
+PlaybackSpeedStr=PlaybackSpeedStrRaw.replace("PlaybackSpeed=","") #Format the playback speed line so that we can grab the value
 PlaybackSpeed=float(PlaybackSpeedStr)
 
-timemultiplier=350/PlaybackSpeed
+timemultiplier=350/PlaybackSpeed #Arbitrary time multiplier that the VIC uses to time in between notes.  Should scale based on how fast the playback speed was set in MusicBoxComposer
 
 countadj=count-12
 totalnotes=countadj/6
@@ -49,7 +48,7 @@ notelistunsorted = [[0 for i in range(2)] for j in range(totalnotes)]
 
 #print notelistunsorted
 
-for n in range(totalnotes):
+for n in range(totalnotes): #This grabs all the relevant note data out of the MBC file, then strips away all the extra junk so that we're left with only note position and note time values 
 	with open(sys.argv[1], 'r') as my_file:
 		PosLine=n*6+13
 		TimeLine=n*6+14
@@ -64,8 +63,6 @@ for n in range(totalnotes):
 		CurrentTimeStr=CurrentTimeStrRaw.replace("t=","")
 		CurrentTime=float(CurrentTimeStr)
 		notelistunsorted[n][0]=CurrentTime
-
-		
 
 notelist=sorted(notelistunsorted, key=lambda element: (element[0], element[1]))
 
@@ -172,7 +169,7 @@ while t<>-1:
 			CurrentTimeNext=notelist[tnext][0]
 
 		if CurrentTime<>CurrentTimeNext:
-			#print noteoccurrences," instances of a note at position ",CurrentTime
+
 			t=t+1
 			
 			if superverbose:
@@ -197,7 +194,7 @@ while t<>-1:
 				tlow=t-3
 				tmid=t-2
 				thigh=t-1
-				#print "Current Time is:",CurrentTime
+
 				nlow=int(notelist[tlow][1])
 				nmid=int(notelist[tmid][1])
 				nhigh=int(notelist[thigh][1])
@@ -321,7 +318,7 @@ while t<>-1:
 				s3val2=0
 				tmid=t-2
 				thigh=t-1
-				#print "Current Time is:",CurrentTime
+
 				nmid=int(notelist[tmid][1])
 				nhigh=int(notelist[thigh][1])
 				if superverbose:
@@ -418,7 +415,7 @@ while t<>-1:
 				s3val2=0
 				tmid=t-2
 				thigh=t-1
-				#print "Current Time is:",CurrentTime
+
 				nhigh=int(notelist[thigh][1])
 				if superverbose:
 					print "Highest Note is:",nhigh
@@ -508,11 +505,13 @@ if verbose:
 	print "Total VICDATA array length is:",vicdatalen
 	print ""
 
+#Open up the VICMusicBasic_ASM file, which is the template that has all the BAISC player stuff in it, and store it in a list called program_out
 with open("VICMusicBasic_ASM", 'r') as f:
 	program_out = f.read().splitlines()
+	
+	
+############### This part takes our array of note and duration data and formats it to "DATA" lines at the end of the VIC-20 BASIC program ######################
 
-
-viclineindex=0
 
 datalinecounter=0 #increment by one every time a line is printed
 viclineoffset=300 #start datalines at the "300" line in BASIC
@@ -525,7 +524,7 @@ for v in range(vicdatalen):
 	nextvaluetest=str(vicdata[v])
 	nextvaluelen=len(nextvaluetest)
 	
-	if (datalinelen + nextvaluelen + 1) < 79:
+	if (datalinelen + nextvaluelen + 1) < 80:
 		datalineelements=datalineelements+1
 		if datalineelements>1:
 		
@@ -541,11 +540,11 @@ for v in range(vicdatalen):
 		datalineelements=0
 		dataline=str(viclineoffset+datalinecounter) + "data" + nextvaluetest + ","
 		
-print dataline 
+print dataline  #Grab the last line of the VIC note data and append it to program_out
 program_out.append(dataline)
 		
 	
-
+#Write program_out to a file
 with open('program_out.txt', 'w') as f:
     for item in program_out:
         print >> f, item
