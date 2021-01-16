@@ -18,7 +18,7 @@ with open(sys.argv[1], 'r') as f:
 	
 verbose=0
 printdata=0
-superverbose=1
+superverbose=0
 
 
 if superverbose==1:
@@ -41,12 +41,9 @@ if verbose:
 	print "Total Lines in the MBC is",count
 	print "Total Notes:",totalnotes
 
-#notelistunsorted = []
 
 rows, cols = (5, 5) 
 notelistunsorted = [[0 for i in range(2)] for j in range(totalnotes)] 
-
-#print notelistunsorted
 
 for n in range(totalnotes): #This grabs all the relevant note data out of the MBC file, then strips away all the extra junk so that we're left with only note position and note time values 
 	with open(sys.argv[1], 'r') as my_file:
@@ -475,8 +472,8 @@ while t<>-1:
 
 			
 
-
-			print "-------"
+			if superverbose:
+				print "-------"
 			break
 		t=t+1
 	if t>=notelistlength:
@@ -539,8 +536,9 @@ for v in range(vicdatalen):
 		datalinecounter=datalinecounter+1
 		datalineelements=0
 		dataline=str(viclineoffset+datalinecounter) + "data" + nextvaluetest + ","
-		
-print dataline  #Grab the last line of the VIC note data and append it to program_out
+
+if printdata:		
+	print dataline  #Grab the last line of the VIC note data and append it to program_out
 program_out.append(dataline)
 		
 	
@@ -549,7 +547,7 @@ with open('program_out.txt', 'w') as f:
     for item in program_out:
         print >> f, item
 
-
+print "BAISC program has been printed out to program_out.txt"
 
 
 
